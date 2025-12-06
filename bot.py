@@ -5,7 +5,9 @@ import random
 
 MP3_FOLDER = "mp3"
 
-bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+# Use only default intents (no privileged intents)
+intents = discord.Intents.default()
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
@@ -25,15 +27,13 @@ async def play(ctx, filename: str = None):
         vc = ctx.voice_client
         await vc.move_to(channel)
 
-    # If no filename, pick random
     if filename is None:
         files = [f for f in os.listdir(MP3_FOLDER) if f.endswith(".mp3")]
         if not files:
-            await ctx.send("❌ No MP3 files found in folder!")
+            await ctx.send("❌ No MP3 files found!")
             return
         filename = random.choice(files)
 
-    # Full path
     path = os.path.join(MP3_FOLDER, filename)
 
     if not os.path.isfile(path):
