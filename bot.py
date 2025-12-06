@@ -52,13 +52,17 @@ async def play(ctx, filename: str = None):
         vc.stop()
 
     print(f"[DEBUG] Playing {path}")
-    try:
-        source = discord.FFmpegPCMAudio(path, before_options="-nostdin")
-        vc.play(source, after=lambda e: print("Finished playing" if not e else f"Error: {e}"))
-        await ctx.send(f"▶️ Now playing `{filename}`")
-    except Exception as e:
-        print(f"[ERROR] Failed to play: {e}")
-        await ctx.send(f"❌ Error playing file: {e}")
+    # In the try block of @bot.command() async def play(...):
+try:
+    source = discord.FFmpegPCMAudio(
+        path,
+        before_options="-nostdin"
+    )
+    vc.play(source, after=lambda e: print("Finished playing" if not e else f"Error: {e}"))
+    await ctx.send(f"▶️ Now playing `{filename}`")
+except Exception as e:
+    print(f"[ERROR] Failed to play: {e}")
+    await ctx.send(f"❌ Error playing file: {e}")
 
 @bot.command()
 async def stop(ctx):
