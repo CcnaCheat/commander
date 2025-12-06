@@ -6,7 +6,7 @@ import random
 MP3_FOLDER = "mp3"
 
 intents = discord.Intents.default()
-intents.message_content = True  # You already enabled this in the portal
+intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
