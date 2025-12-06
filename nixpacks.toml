@@ -1,12 +1,13 @@
-# nixpacks.toml — THIS ONE WORKS EVERY TIME
+# nixpacks.toml → FINAL WORKING VERSION
 [phases.setup]
 nixPkgs = ["...", "ffmpeg"]
 
-# Force ffmpeg into a location that discord.py can ALWAYS find
-[phases.install]
+# This forces ffmpeg into the global PATH that Python/discord.py can see
+[phases.build]
 cmds = [
   "mkdir -p /usr/local/bin",
-  "ln -sf $(which ffmpeg) /usr/local/bin/ffmpeg || true"
+  "find /nix/store -name ffmpeg -type f -executable | head -1 | xargs -I {} ln -sf {} /usr/local/bin/ffmpeg",
+  "chmod +x /usr/local/bin/ffmpeg"
 ]
 
 [start]
