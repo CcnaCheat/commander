@@ -1,5 +1,10 @@
+# nixpacks.toml ← COPY-PASTE THIS EXACTLY
 [phases.setup]
-nixPkgs = ["...", "ffmpeg", "opusTools", "libopus", "libopusenc"]
+nixPkgs = ["...", "ffmpeg"]
+
+# This forces ffmpeg into the correct PATH for discord.py
+[phases.build]
+cmds = ["ln -s /nix/store/*-ffmpeg-*/bin/ffmpeg /usr/local/bin/ffmpeg || true"]
 
 [start]
 cmd = "python bot.py"
