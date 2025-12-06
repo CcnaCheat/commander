@@ -1,5 +1,1 @@
 discord.py
-openai
-elevenlabs
-python-dotenv
-pynacl
