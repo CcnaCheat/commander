@@ -5,7 +5,7 @@ import random
 
 MP3_FOLDER = "mp3"
 
-# Use only default intents (no privileged intents)
+# Use only default intents (no privileged intents needed)
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -15,18 +15,28 @@ async def on_ready():
 
 @bot.command()
 async def play(ctx, filename: str = None):
+    # Check if the user is in a voice channel
     if ctx.author.voice is None:
         await ctx.send("❗ You need to be in a voice channel first.")
         return
 
     channel = ctx.author.voice.channel
 
-    if ctx.voice_client is None:
-        vc = await channel.connect()
-    else:
-        vc = ctx.voice_client
+    # Connect or move to the voice channel
+    vc = ctx.voice_client
+    if vc is None:
+        try:
+            vc = await channel.connect()
+        except discord.ClientException:
+            await ctx.send("❌ Already connected somewhere else!")
+            return
+        except discord.errors.Forbidden:
+            await ctx.send("❌ I don't have permission to join the voice channel!")
+            return
+    elif vc.channel != channel:
         await vc.move_to(channel)
 
+    # Choose a file if none specified
     if filename is None:
         files = [f for f in os.listdir(MP3_FOLDER) if f.endswith(".mp3")]
         if not files:
@@ -35,18 +45,23 @@ async def play(ctx, filename: str = None):
         filename = random.choice(files)
 
     path = os.path.join(MP3_FOLDER, filename)
-
     if not os.path.isfile(path):
         await ctx.send(f"❌ File `{filename}` not found!")
         return
 
+    # Stop any currently playing audio
+    if vc.is_playing():
+        vc.stop()
+
+    # Play the file
     vc.play(discord.FFmpegPCMAudio(executable="ffmpeg", source=path))
     await ctx.send(f"▶️ Now playing `{filename}`!")
 
 @bot.command()
 async def stop(ctx):
-    if ctx.voice_client:
-        await ctx.voice_client.disconnect()
+    vc = ctx.voice_client
+    if vc and vc.is_connected():
+        await vc.disconnect()
         await ctx.send("⏹️ Stopped playing and left the voice channel.")
     else:
         await ctx.send("❌ I'm not in a voice channel!")
