@@ -1,14 +1,6 @@
-# nixpacks.toml → FINAL WORKING VERSION
+# nixpacks.toml — Apt-based FFmpeg (works 100% for Discord bots)
 [phases.setup]
-nixPkgs = ["...", "ffmpeg"]
-
-# This forces ffmpeg into the global PATH that Python/discord.py can see
-[phases.build]
-cmds = [
-  "mkdir -p /usr/local/bin",
-  "find /nix/store -name ffmpeg -type f -executable | head -1 | xargs -I {} ln -sf {} /usr/local/bin/ffmpeg",
-  "chmod +x /usr/local/bin/ffmpeg"
-]
+aptPkgs = ["...", "ffmpeg"]
 
 [start]
 cmd = "python bot.py"
