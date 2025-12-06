@@ -1,6 +1,0 @@
-# nixpacks.toml — apt installs ffmpeg, start cmd forces it into PATH
-[phases.setup]
-aptPkgs = ["...", "ffmpeg"]
-
-[start]
-cmd = "export PATH=$PATH:/usr/bin && python bot.py"
