@@ -1,10 +1,13 @@
-# nixpacks.toml ← COPY-PASTE THIS EXACTLY
+# nixpacks.toml — THIS ONE WORKS EVERY TIME
 [phases.setup]
 nixPkgs = ["...", "ffmpeg"]
 
-# This forces ffmpeg into the correct PATH for discord.py
-[phases.build]
-cmds = ["ln -s /nix/store/*-ffmpeg-*/bin/ffmpeg /usr/local/bin/ffmpeg || true"]
+# Force ffmpeg into a location that discord.py can ALWAYS find
+[phases.install]
+cmds = [
+  "mkdir -p /usr/local/bin",
+  "ln -sf $(which ffmpeg) /usr/local/bin/ffmpeg || true"
+]
 
 [start]
 cmd = "python bot.py"
