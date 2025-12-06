@@ -54,7 +54,9 @@ async def play(ctx, filename: str = None):
         vc.stop()
 
     # Play the file
-    vc.play(discord.FFmpegPCMAudio(executable="ffmpeg", source=path))
+    # With this (more reliable):
+    source = discord.FFmpegPCMAudio(path, executable="ffmpeg")
+    vc.play(source, after=lambda e: print(f"Player error: {e}" if e else None))
     await ctx.send(f"▶️ Now playing `{filename}`!")
 
 @bot.command()
