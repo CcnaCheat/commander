@@ -1,14 +1,6 @@
-# nixpacks.toml — FINAL FIX DECEMBER 2025
+# nixpacks.toml — apt installs ffmpeg, start cmd forces it into PATH
 [phases.setup]
-nixPkgs = ["...", "ffmpeg"]
-
-# This forces ffmpeg into PATH correctly every time
-[phases.build]
-cmds = [
-  "mkdir -p /usr/local/bin",
-  "find /nix/store -name ffmpeg -type f -executable -exec ln -sf {} /usr/local/bin/ffmpeg \\; || true",
-  "chmod +x /usr/local/bin/ffmpeg || true"
-]
+aptPkgs = ["...", "ffmpeg"]
 
 [start]
-cmd = "python bot.py"
+cmd = "export PATH=$PATH:/usr/bin && python bot.py"
